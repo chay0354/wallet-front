@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 
 export default function Home() {
@@ -9,10 +9,10 @@ export default function Home() {
 
   useEffect(() => {
     // Redirect to appropriate page based on auth state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    authService.getSession().then((user) => {
+      if (user) {
         // Redirect admin to admin page, others to wallet
-        if (session.user.email === 'admin@admin') {
+        if (user.email === 'admin@admin') {
           router.push('/admin')
         } else {
           router.push('/wallet')

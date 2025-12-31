@@ -1,49 +1,29 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { authService, User } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import Dashboard from '@/components/Dashboard'
 
 export default function WalletPage() {
-  const [session, setSession] = useState<any>(null)
+  const [session, setSession] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
+    authService.getSession().then((user) => {
+      if (!user) {
         router.push('/login')
       } else {
         // Redirect admin to admin page
-        if (session.user.email === 'admin@admin') {
+        if (user.email === 'admin@admin') {
           router.push('/admin')
         } else {
-          setSession(session)
+          setSession(user)
         }
       }
       setLoading(false)
     })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      // Handle sign out event specifically
-      if (event === 'SIGNED_OUT' || !session) {
-        setSession(null)
-        router.replace('/login')
-        return
-      }
-      
-      // Redirect admin to admin page
-      if (session.user.email === 'admin@admin') {
-        router.push('/admin')
-      } else {
-        setSession(session)
-      }
-    })
-
-    return () => subscription.unsubscribe()
   }, [router])
 
   if (loading) {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/lib/auth'
 
 export default function Auth() {
   const router = useRouter()
@@ -35,70 +35,17 @@ export default function Auth() {
           return
         }
 
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: undefined,
-            data: {
-              email_verified: true
-            }
-          }
-        })
+        await authService.signUp(email, password)
         
-        if (error) {
-          // Handle specific error cases
-          if (error.message.includes('already registered') || error.message.includes('already exists') || error.message.includes('User already registered')) {
-            throw new Error('This email is already registered. Please sign in instead.')
-          }
-          throw error
-        }
-        
-        // If user is created but not confirmed, try to sign in immediately
-        if (data.user) {
-          // Try to sign in right away (works if email confirmation is disabled in Supabase)
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          })
-          
-          if (signInError) {
-            // If sign in fails, it might be because email needs confirmation
-            // In that case, we'll show a message but the user should check Supabase settings
-            if (signInError.message.includes('email') || signInError.message.includes('confirm')) {
-              throw new Error('Please disable email confirmation in Supabase dashboard settings (Authentication → Settings → Disable "Enable email confirmations")')
-            }
-            if (signInError.message.includes('already registered') || signInError.message.includes('already exists')) {
-              throw new Error('This email is already registered. Please sign in instead.')
-            }
-            throw signInError
-          }
-          
-          // Check if user is admin and redirect accordingly
-          if (email === 'admin@admin') {
-            router.push('/admin')
-          } else {
-            router.push('/wallet')
-          }
+        // Check if user is admin and redirect accordingly
+        if (email === 'admin@admin') {
+          router.push('/admin')
+        } else {
+          router.push('/wallet')
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) {
-          // Provide helpful error messages
-          if (error.message.includes('Invalid login credentials') || error.message.includes('Invalid password') || error.message.includes('Wrong password')) {
-            throw new Error('Invalid email or password. Please check your credentials and try again.')
-          }
-          if (error.message.includes('email') || error.message.includes('confirm')) {
-            throw new Error('Email confirmation required. Please disable email confirmation in Supabase dashboard: Authentication → Settings → Disable "Enable email confirmations"')
-          }
-          if (error.message.includes('User not found') || error.message.includes('not found')) {
-            throw new Error('No account found with this email. Please sign up first.')
-          }
-          throw error
-        }
+        await authService.login(email, password)
+        
         // Check if user is admin and redirect accordingly
         if (email === 'admin@admin') {
           router.push('/admin')

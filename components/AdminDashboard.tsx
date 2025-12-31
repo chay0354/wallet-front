@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { API_URL } from '@/lib/config'
@@ -68,7 +68,8 @@ export default function AdminDashboard({ session }: { session: any }) {
   const mountedRef = useRef(true)
 
   useEffect(() => {
-    if (!session?.access_token) return
+    const token = authService.getToken()
+    if (!token) return
     
     const currentToken = session.access_token
     mountedRef.current = true
@@ -114,7 +115,8 @@ export default function AdminDashboard({ session }: { session: any }) {
       clearTimeout(startRefreshInterval)
       
       // Only abort if session actually changed (not just React Strict Mode remount)
-      if (!session?.access_token || session?.access_token !== sessionTokenRef.current) {
+      const token = authService.getToken()
+      if (!token || token !== sessionTokenRef.current) {
         mountedRef.current = false
         if (abortControllerRef.current) {
           abortControllerRef.current.abort()
@@ -123,15 +125,17 @@ export default function AdminDashboard({ session }: { session: any }) {
         hasInitialLoadedRef.current = false
       }
     }
-  }, [session?.access_token])
+  }, [session])
   
   const refreshPendingTransactions = async (signal?: AbortSignal) => {
     // Prevent concurrent refreshes
-    if (!session?.access_token || isRefreshing || isFetchingRef.current) return
+    const token = authService.getToken()
+    if (!token || isRefreshing || isFetchingRef.current) return
     
     setIsRefreshing(true)
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       
       // ONLY refresh pending transactions - nothing else
       const pendingRes = await axios.get(`${API_URL}/api/admin/pending-transactions`, {
@@ -162,13 +166,15 @@ export default function AdminDashboard({ session }: { session: any }) {
   }
 
   const fetchData = async (signal?: AbortSignal) => {
-    if (!session?.access_token || isFetchingRef.current) return
+    const token = authService.getToken()
+    if (!token || isFetchingRef.current) return
     
     isFetchingRef.current = true
     setLoading(true)
     
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
 
       // Fetch critical data first (pending, rules, status) - these are needed immediately
       // Only add signal if provided (not for initial load)
@@ -285,10 +291,7 @@ export default function AdminDashboard({ session }: { session: any }) {
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Error signing out:', error)
-      }
+      authService.logout()
       // Force redirect to login page
       window.location.href = '/login'
     } catch (error) {
@@ -322,7 +325,8 @@ export default function AdminDashboard({ session }: { session: any }) {
 
   const handleApproveTransaction = async (txId: string, approve: boolean) => {
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       console.log(`Processing ${approve ? 'approval' : 'rejection'} for transaction ${txId}`)
       
       const response = await axios.post(
@@ -389,7 +393,8 @@ export default function AdminDashboard({ session }: { session: any }) {
 
   const handleUpdateRule = async (ruleId: string, updates: any) => {
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       await axios.post(
         `${API_URL}/api/admin/rules/update`,
         {
@@ -437,7 +442,8 @@ export default function AdminDashboard({ session }: { session: any }) {
   const handleStartActionBlocker = async () => {
     setActionBlockerLoading(true)
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       await axios.post(`${API_URL}/api/admin/action-blocker/start`, {}, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 30000 // 30 seconds timeout
@@ -468,7 +474,8 @@ export default function AdminDashboard({ session }: { session: any }) {
   const handleStopActionBlocker = async () => {
     setActionBlockerLoading(true)
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       await axios.post(`${API_URL}/api/admin/action-blocker/stop`, {}, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 30000 // 30 seconds timeout

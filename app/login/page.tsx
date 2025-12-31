@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import Auth from '@/components/Auth'
 
@@ -10,32 +10,16 @@ export default function LoginPage() {
 
   useEffect(() => {
     // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
+    authService.getSession().then((user) => {
+      if (user) {
         // Redirect admin to admin page, others to wallet
-        if (session.user.email === 'admin@admin') {
+        if (user.email === 'admin@admin') {
           router.push('/admin')
         } else {
           router.push('/wallet')
         }
       }
     })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        // Redirect admin to admin page, others to wallet
-        if (session.user.email === 'admin@admin') {
-          router.push('/admin')
-        } else {
-          router.push('/wallet')
-        }
-      }
-    })
-
-    return () => subscription.unsubscribe()
   }, [router])
 
   return <Auth />

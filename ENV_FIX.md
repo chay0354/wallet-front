@@ -8,7 +8,7 @@ The error occurs because Next.js environment variables must be prefixed with `NE
 Your `.env` or `.env.local` file in the `wallet-front` directory must have these exact variable names:
 
 ```env
-NEXT_PUBLIC_BACK_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_BACK_URL=https://wallet-back-nu.vercel.app/
 NEXT_PUBLIC_SUPABASE_URL=https://cerdtvnhqmebiayclxcd.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlcmR0dm5ocW1lYmlheWNseGNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMjQ2ODIsImV4cCI6MjA4MjcwMDY4Mn0.-uXDP5Dy6w2Rn6ro7O6dfMHBTHKQGiboMC1MwC0H4vo
 ```
@@ -18,7 +18,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 1. **Open your `.env` file** in `wallet-front` directory
 
 2. **Make sure it has these three lines** (with `NEXT_PUBLIC_` prefix):
-   - `NEXT_PUBLIC_BACK_URL=http://127.0.0.1:8000`
+   - `NEXT_PUBLIC_BACK_URL=https://wallet-back-nu.vercel.app/`
    - `NEXT_PUBLIC_SUPABASE_URL=https://cerdtvnhqmebiayclxcd.supabase.co`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
 

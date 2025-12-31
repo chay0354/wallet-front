@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { supabase } from '@/lib/supabase'
+import { authService } from '@/lib/auth'
 import axios from 'axios'
 import { API_URL } from '@/lib/config'
 
@@ -45,7 +45,8 @@ export default function Dashboard({ session }: { session: any }) {
 
   // Unified fetch function with proper cancellation
   const fetchWalletData = useCallback(async (isInitialLoad = false, showLoading = true, forceCancel = false) => {
-    if (!session?.access_token) return
+    const token = authService.getToken()
+    if (!token) return
     
     // Prevent duplicate requests (unless forced)
     if (isFetchingRef.current && !forceCancel) {
@@ -75,7 +76,8 @@ export default function Dashboard({ session }: { session: any }) {
     const signal = abortController?.signal
     
     try {
-      const token = session.access_token
+      const token = authService.getToken()
+      if (!token) return
 
       // Fetch balance and transactions in parallel
       const requestConfig: any = {
@@ -150,7 +152,7 @@ export default function Dashboard({ session }: { session: any }) {
         abortControllerRef.current = null
       }
     }
-  }, [session?.access_token, processTransactions])
+  }, [session, processTransactions])
 
   // Track if initial load has been done for this session
   const sessionTokenRef = useRef<string | null>(null)
@@ -158,11 +160,12 @@ export default function Dashboard({ session }: { session: any }) {
 
   // Initial load effect - only runs once per session token
   useEffect(() => {
-    if (!session?.access_token) {
+    const token = authService.getToken()
+    if (!token || !session) {
       return
     }
     
-    const currentToken = session.access_token
+    const currentToken = token
     
     // Reset loading state if session token changed
     if (currentToken !== sessionTokenRef.current) {
@@ -186,20 +189,21 @@ export default function Dashboard({ session }: { session: any }) {
         refreshIntervalRef.current = null
       }
       // Only reset if session actually changed (not just React Strict Mode remount)
-      if (!session?.access_token || session?.access_token !== sessionTokenRef.current) {
+      const currentTokenCheck = authService.getToken()
+      if (!currentTokenCheck || currentTokenCheck !== sessionTokenRef.current) {
         mountedRef.current = false
         hasInitialLoadedRef.current = false
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.access_token])
+  }, [session])
 
   // Manual refresh function - force cancel previous request
   const handleManualRefresh = useCallback(() => {
     if (session?.access_token) {
       fetchWalletData(false, false, true)
     }
-  }, [session?.access_token, fetchWalletData])
+  }, [session, fetchWalletData])
 
   const handleTransfer = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -208,7 +212,8 @@ export default function Dashboard({ session }: { session: any }) {
     setMessage('')
 
     try {
-      const token = session?.access_token
+      const token = authService.getToken()
+      if (!token) return
       const response = await axios.post(
         `${API_URL}/api/transfer`,
         {
@@ -235,14 +240,11 @@ export default function Dashboard({ session }: { session: any }) {
     } finally {
       setLoading(false)
     }
-  }, [session?.access_token, recipientEmail, amount, fetchWalletData])
+  }, [session, recipientEmail, amount, fetchWalletData])
 
   const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Error signing out:', error)
-      }
+      authService.logout()
       // Force redirect to login page
       window.location.href = '/login'
     } catch (error) {
