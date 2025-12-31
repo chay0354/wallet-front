@@ -323,7 +323,9 @@ export default function AdminDashboard({ session }: { session: any }) {
   const handleApproveTransaction = async (txId: string, approve: boolean) => {
     try {
       const token = session?.access_token
-      await axios.post(
+      console.log(`Processing ${approve ? 'approval' : 'rejection'} for transaction ${txId}`)
+      
+      const response = await axios.post(
         `${API_URL}/api/admin/approve-transaction`,
         {
           transaction_id: txId,
@@ -334,7 +336,15 @@ export default function AdminDashboard({ session }: { session: any }) {
           timeout: 30000 // 30 seconds timeout
         }
       )
+      
+      console.log('Approval response:', response.data)
+      
       setReviewingTx(null)
+      
+      // Show success message
+      if (response.data?.status === 'approved') {
+        alert(`Transaction ${approve ? 'approved' : 'rejected'} successfully!`)
+      }
       
       // Only refresh pending transactions - remove the approved/rejected one
       // Don't fetch all transactions or anything else
@@ -358,6 +368,7 @@ export default function AdminDashboard({ session }: { session: any }) {
       })
     } catch (error: any) {
       console.error('Error approving transaction:', error)
+      console.error('Error response:', error.response?.data)
       // Provide more specific error messages
       let errorMessage = 'Failed to process transaction'
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
