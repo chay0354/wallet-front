@@ -65,7 +65,7 @@ export default function AdminDashboard({ session }: { session: User }) {
     const token = authService.getToken()
     if (!token) return
     
-    const currentToken = session.access_token
+    const currentToken = token
     mountedRef.current = true
     
     // Only abort if session token actually changed (not just React Strict Mode remount)
