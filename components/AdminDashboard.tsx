@@ -363,7 +363,12 @@ export default function AdminDashboard({ session }: { session: any }) {
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
         errorMessage = 'Request timed out. Please check your connection and try again.'
       } else if (error.response) {
-        errorMessage = error.response.data?.detail || `Error: ${error.response.status} ${error.response.statusText}`
+        // Check if it's a blocked status (action blocker still blocking)
+        if (error.response.data?.status === 'blocked') {
+          errorMessage = `Transaction blocked: ${error.response.data?.message || 'Cannot approve due to rule violations'}`
+        } else {
+          errorMessage = error.response.data?.detail || `Error: ${error.response.status} ${error.response.statusText}`
+        }
       } else if (error.request) {
         errorMessage = 'Unable to connect to server. Please check if the backend is running.'
       }
