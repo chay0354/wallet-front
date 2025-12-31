@@ -3,7 +3,10 @@ import { API_URL } from './config'
 export interface User {
   id: string
   email: string
-  full_name?: string
+  full_name?: string | null
+  created_at?: string
+  balance?: number
+  transaction_count?: number
 }
 
 export interface AuthResponse {

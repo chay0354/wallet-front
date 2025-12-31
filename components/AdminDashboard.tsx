@@ -6,14 +6,8 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { API_URL } from '@/lib/config'
 
-interface User {
-  id: string
-  email: string
-  full_name: string | null
-  created_at: string
-  balance?: number
-  transaction_count?: number
-}
+// User type is imported from @/lib/auth
+// It includes: id, email, full_name?, created_at?, balance?, transaction_count?
 
 interface Transaction {
   id: string
@@ -1195,7 +1189,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                         <div className="flex justify-between items-center pt-2 border-t border-slate-600/50">
                           <span className="text-xs text-slate-400">Joined</span>
                           <span className="text-xs text-slate-500">
-                            {new Date(user.created_at).toLocaleDateString()}
+                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                           </span>
                         </div>
                       </div>
