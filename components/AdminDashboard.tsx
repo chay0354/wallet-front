@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { authService } from '@/lib/auth'
+import { authService, User } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { API_URL } from '@/lib/config'
@@ -43,7 +43,7 @@ interface PendingTransaction {
   reviewed_by?: string
 }
 
-export default function AdminDashboard({ session }: { session: any }) {
+export default function AdminDashboard({ session }: { session: User }) {
   const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])

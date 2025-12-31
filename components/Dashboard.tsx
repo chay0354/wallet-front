@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { authService } from '@/lib/auth'
+import { authService, User } from '@/lib/auth'
 import axios from 'axios'
 import { API_URL } from '@/lib/config'
 
@@ -16,7 +16,9 @@ interface Transaction {
   status?: string
 }
 
-export default function Dashboard({ session }: { session: any }) {
+import { User } from '@/lib/auth'
+
+export default function Dashboard({ session }: { session: User }) {
   const [balance, setBalance] = useState<number>(0)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [recipientEmail, setRecipientEmail] = useState('')
@@ -277,7 +279,7 @@ export default function Dashboard({ session }: { session: any }) {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Digital Wallet
               </h1>
-              <p className="text-slate-400 text-sm mt-1">{session?.user?.email}</p>
+              <p className="text-slate-400 text-sm mt-1">{session?.email}</p>
             </div>
             <button
               onClick={handleSignOut}
@@ -398,7 +400,7 @@ export default function Dashboard({ session }: { session: any }) {
           ) : (
             <div className="space-y-3">
               {transactions.map((tx) => {
-                const isSent = tx.from_user_id === session.user.id
+                const isSent = tx.from_user_id === session.id
                 const otherEmail = isSent ? tx.to_user_email : tx.from_user_email
                 const isPending = tx.status === 'pending' || tx.id.startsWith('pending_')
                 

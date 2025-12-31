@@ -40,7 +40,7 @@ export default function AdminPage() {
     )
   }
 
-  if (!session || session.user.email !== 'admin@admin') {
+  if (!session || session.email !== 'admin@admin') {
     return null
   }
 

@@ -27,7 +27,14 @@ export const authService = {
     
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(error.detail || 'Signup failed')
+      // Handle validation errors (422)
+      if (response.status === 422 && Array.isArray(error.detail)) {
+        const errorMessages = error.detail.map((e: any) => `${e.loc?.join('.')}: ${e.msg}`).join(', ')
+        throw new Error(`Validation error: ${errorMessages}`)
+      }
+      // Handle other errors
+      const errorMsg = typeof error.detail === 'string' ? error.detail : (error.detail?.[0]?.msg || 'Signup failed')
+      throw new Error(errorMsg)
     }
     
     const data: AuthResponse = await response.json()
@@ -46,7 +53,14 @@ export const authService = {
     
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(error.detail || 'Login failed')
+      // Handle validation errors (422)
+      if (response.status === 422 && Array.isArray(error.detail)) {
+        const errorMessages = error.detail.map((e: any) => `${e.loc?.join('.')}: ${e.msg}`).join(', ')
+        throw new Error(`Validation error: ${errorMessages}`)
+      }
+      // Handle other errors
+      const errorMsg = typeof error.detail === 'string' ? error.detail : (error.detail?.[0]?.msg || 'Login failed')
+      throw new Error(errorMsg)
     }
     
     const data: AuthResponse = await response.json()
