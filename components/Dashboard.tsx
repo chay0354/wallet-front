@@ -16,8 +16,6 @@ interface Transaction {
   status?: string
 }
 
-import { User } from '@/lib/auth'
-
 export default function Dashboard({ session }: { session: User }) {
   const [balance, setBalance] = useState<number>(0)
   const [transactions, setTransactions] = useState<Transaction[]>([])
