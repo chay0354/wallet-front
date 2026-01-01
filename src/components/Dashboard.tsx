@@ -1,7 +1,9 @@
+'use client'
+
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { authService, User } from '../lib/auth'
+import { authService, User } from '@/lib/auth'
 import axios from 'axios'
-import { API_URL } from '../lib/config'
+import { API_URL } from '@/lib/config'
 
 interface Transaction {
   id: string
@@ -13,6 +15,8 @@ interface Transaction {
   to_user_email?: string
   status?: string
 }
+
+import { User } from '@/lib/auth'
 
 export default function Dashboard({ session }: { session: User }) {
   const [balance, setBalance] = useState<number>(0)
@@ -28,7 +32,7 @@ export default function Dashboard({ session }: { session: User }) {
   // Refs for managing requests and preventing duplicates
   const abortControllerRef = useRef<AbortController | null>(null)
   const isFetchingRef = useRef(false)
-  const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const mountedRef = useRef(true)
 
   // Process transactions helper
@@ -198,8 +202,7 @@ export default function Dashboard({ session }: { session: User }) {
 
   // Manual refresh function - force cancel previous request
   const handleManualRefresh = useCallback(() => {
-    const token = authService.getToken()
-    if (token) {
+    if (session?.access_token) {
       fetchWalletData(false, false, true)
     }
   }, [session, fetchWalletData])

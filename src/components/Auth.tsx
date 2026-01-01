@@ -1,7 +1,11 @@
+'use client'
+
 import { useState } from 'react'
-import { authService } from '../lib/auth'
+import { useRouter } from 'next/navigation'
+import { authService } from '@/lib/auth'
 
 export default function Auth() {
+  const router = useRouter()
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,18 +39,18 @@ export default function Auth() {
         
         // Check if user is admin and redirect accordingly
         if (email === 'admin@admin') {
-          window.location.href = '/admin'
+          router.push('/admin')
         } else {
-          window.location.href = '/wallet'
+          router.push('/wallet')
         }
       } else {
         await authService.login(email, password)
         
         // Check if user is admin and redirect accordingly
         if (email === 'admin@admin') {
-          window.location.href = '/admin'
+          router.push('/admin')
         } else {
-          window.location.href = '/wallet'
+          router.push('/wallet')
         }
       }
     } catch (error: any) {

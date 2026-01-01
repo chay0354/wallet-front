@@ -1,7 +1,10 @@
+'use client'
+
 import { useState, useEffect, useRef } from 'react'
-import { authService, User } from '../lib/auth'
+import { authService, User } from '@/lib/auth'
+import { useRouter } from 'next/navigation'
 import axios from 'axios'
-import { API_URL } from '../lib/config'
+import { API_URL } from '@/lib/config'
 
 // User type is imported from @/lib/auth
 // It includes: id, email, full_name?, created_at?, balance?, transaction_count?
@@ -35,6 +38,7 @@ interface PendingTransaction {
 }
 
 export default function AdminDashboard({ session }: { session: User }) {
+  const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [pendingTransactions, setPendingTransactions] = useState<PendingTransaction[]>([])
@@ -52,7 +56,7 @@ export default function AdminDashboard({ session }: { session: User }) {
   // Use refs to prevent duplicate requests and track loading state
   const isFetchingRef = useRef(false)
   const abortControllerRef = useRef<AbortController | null>(null)
-  const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const sessionTokenRef = useRef<string | null>(null)
   const hasInitialLoadedRef = useRef(false)
   const mountedRef = useRef(true)

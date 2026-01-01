@@ -32,3 +32,6 @@ You can also run this SQL in your Supabase SQL Editor to auto-confirm all new us
 Even with email confirmation disabled in Supabase settings, users will still be able to sign up and sign in immediately without email verification.
 
 
+
+
+

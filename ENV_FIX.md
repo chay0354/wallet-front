@@ -48,3 +48,6 @@ This will create/update `.env.local` with the correct format.
 Next.js only exposes environment variables prefixed with `NEXT_PUBLIC_` to the browser for security reasons. Variables without this prefix are only available on the server side.
 
 
+
+
+
