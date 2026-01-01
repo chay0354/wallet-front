@@ -16,8 +16,6 @@ interface Transaction {
   status?: string
 }
 
-import { User } from '@/lib/auth'
-
 export default function Dashboard({ session }: { session: User }) {
   const [balance, setBalance] = useState<number>(0)
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -202,7 +200,7 @@ export default function Dashboard({ session }: { session: User }) {
 
   // Manual refresh function - force cancel previous request
   const handleManualRefresh = useCallback(() => {
-    if (session?.access_token) {
+    if (session) {
       fetchWalletData(false, false, true)
     }
   }, [session, fetchWalletData])
