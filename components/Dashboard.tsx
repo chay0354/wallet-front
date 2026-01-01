@@ -200,7 +200,7 @@ export default function Dashboard({ session }: { session: User }) {
 
   // Manual refresh function - force cancel previous request
   const handleManualRefresh = useCallback(() => {
-    if (session?.access_token) {
+    if (session) {
       fetchWalletData(false, false, true)
     }
   }, [session, fetchWalletData])
