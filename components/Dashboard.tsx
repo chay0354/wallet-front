@@ -420,7 +420,7 @@ export default function Dashboard({ session }: { session: User }) {
                             isPending ? 'bg-yellow-400 animate-pulse' : isSent ? 'bg-red-400' : 'bg-emerald-400'
                           }`}></div>
                           <p className="font-semibold text-slate-200">
-                            {isPending ? 'Pending' : isSent ? 'Sent to' : 'Received from'}
+                            {isPending ? 'Transaction blocked, if manager would like to change this decision you will see it as approved' : isSent ? 'Sent to' : 'Received from'}
                           </p>
                           {isPending && (
                             <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">

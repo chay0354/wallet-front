@@ -195,8 +195,25 @@ export default function AdminDashboard({ session }: { session: User }) {
       
       // Set critical data first (pending transactions, rules, blocker status)
       const pendingData = pendingRes.status === 'fulfilled' ? (pendingRes.value.data.pending_transactions || []) : []
-      const rulesData = rulesRes.status === 'fulfilled' ? (rulesRes.value.data.rules || []) : []
+      const rawRulesData = rulesRes.status === 'fulfilled' ? (rulesRes.value.data.rules || []) : []
       const blockerData = blockerRes.status === 'fulfilled' ? blockerRes.value.data : { status: 'stopped', running: false }
+      
+      // Normalize rules data: convert rule_config to config for consistency
+      const rulesData = rawRulesData.map((rule: any) => {
+        let config = rule.config || rule.rule_config || {}
+        // If rule_config is a string, parse it
+        if (typeof config === 'string') {
+          try {
+            config = JSON.parse(config)
+          } catch (e) {
+            config = {}
+          }
+        }
+        return {
+          ...rule,
+          config: config
+        }
+      })
       
       setPendingTransactions(pendingData)
       setRules(rulesData)
@@ -295,14 +312,24 @@ export default function AdminDashboard({ session }: { session: User }) {
     }
   }
 
-  // Filter transactions based on search
-  const filteredTransactions = transactions.filter(tx => {
+  // Combine transactions and pending transactions for display
+  const allTransactions = [
+    ...transactions,
+    ...pendingTransactions.map(tx => ({
+      ...tx,
+      status: 'pending' // Mark as pending/blocked
+    }))
+  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+  // Filter transactions based on search (including blocked/pending)
+  const filteredTransactions = allTransactions.filter(tx => {
     if (!searchTerm) return true
     const search = searchTerm.toLowerCase()
     return (
       tx.from_user_email?.toLowerCase().includes(search) ||
       tx.to_user_email?.toLowerCase().includes(search) ||
-      tx.amount.toString().includes(search)
+      tx.amount.toString().includes(search) ||
+      (tx.violations && tx.violations.some(v => v.toLowerCase().includes(search)))
     )
   })
 
@@ -389,7 +416,8 @@ export default function AdminDashboard({ session }: { session: User }) {
     try {
       const token = authService.getToken()
       if (!token) return
-      await axios.post(
+      
+      const response = await axios.post(
         `${API_URL}/api/admin/rules/update`,
         {
           rule_id: ruleId,
@@ -400,16 +428,41 @@ export default function AdminDashboard({ session }: { session: User }) {
           timeout: 30000 // 30 seconds timeout
         }
       )
+      
+      // Show success message
+      if (response.data?.message) {
+        console.log('Rule updated successfully:', response.data.message)
+      }
+      
       setEditingRule(null)
       // Only refresh rules, not everything
       const rulesRes = await axios.get(`${API_URL}/api/admin/rules`, {
         headers: { Authorization: `Bearer ${token}` },
         timeout: 30000 // 30 seconds timeout
       }).catch(() => ({ data: { rules: [] } }))
-      setRules(rulesRes.data.rules || [])
+      
+      // Normalize rules data: convert rule_config to config for consistency
+      const rawRulesData = rulesRes.data.rules || []
+      const normalizedRules = rawRulesData.map((rule: any) => {
+        let config = rule.config || rule.rule_config || {}
+        // If rule_config is a string, parse it
+        if (typeof config === 'string') {
+          try {
+            config = JSON.parse(config)
+          } catch (e) {
+            config = {}
+          }
+        }
+        return {
+          ...rule,
+          config: config
+        }
+      })
+      
+      setRules(normalizedRules)
       const configs: Record<string, any> = {}
-      if (rulesRes.data.rules) {
-        rulesRes.data.rules.forEach((rule: any) => {
+      if (normalizedRules) {
+        normalizedRules.forEach((rule: any) => {
           configs[rule.rule_id] = rule.config || {}
         })
       }
@@ -542,30 +595,6 @@ export default function AdminDashboard({ session }: { session: User }) {
               <p className="text-slate-400 text-sm mt-1">System Administration & Monitoring</p>
             </div>
             <div className="flex items-center gap-4">
-              {/* Action Blocker Service Status */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 rounded-lg border border-slate-600">
-                <div className={`w-2 h-2 rounded-full ${actionBlockerStatus?.running ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
-                <span className="text-sm text-slate-300">
-                  Action Blocker: {actionBlockerStatus?.running ? 'Running' : 'Stopped'}
-                </span>
-                {actionBlockerStatus?.running ? (
-                  <button
-                    onClick={handleStopActionBlocker}
-                    disabled={actionBlockerLoading}
-                    className="ml-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition-colors disabled:opacity-50"
-                  >
-                    Stop
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleStartActionBlocker}
-                    disabled={actionBlockerLoading}
-                    className="ml-2 px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors disabled:opacity-50"
-                  >
-                    Start
-                  </button>
-                )}
-              </div>
               <button
                 onClick={handleSignOut}
                 className="px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition-all font-medium"
@@ -663,7 +692,7 @@ export default function AdminDashboard({ session }: { session: User }) {
           {activeTab === 'pending' && (
             <div className="bg-slate-700/30 rounded-xl p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-slate-200">Pending Transactions Review</h2>
+                <h2 className="text-2xl font-semibold text-slate-200">blocked transaction review</h2>
                 <button
                   onClick={() => {
                     if (!isRefreshing && !isFetchingRef.current) {
@@ -818,12 +847,15 @@ export default function AdminDashboard({ session }: { session: User }) {
                 <div className="space-y-3 max-h-[600px] overflow-y-auto">
                   {filteredTransactions.map((tx) => {
                     const isRejected = tx.status === 'rejected' || tx.id.startsWith('rejected_')
+                    const isBlocked = tx.status === 'pending' || tx.id.startsWith('pending_')
                     return (
                       <div
                         key={tx.id}
                         className={`p-5 rounded-xl border transition-all hover:scale-[1.01] ${
                           isRejected
                             ? 'bg-red-500/10 border-red-500/50 hover:border-red-500'
+                            : isBlocked
+                            ? 'bg-yellow-500/10 border-yellow-500/50 hover:border-yellow-500'
                             : 'bg-slate-600/30 border-slate-600/50 hover:border-slate-500'
                         }`}
                       >
@@ -831,13 +863,18 @@ export default function AdminDashboard({ session }: { session: User }) {
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-3">
                               <div className={`w-3 h-3 rounded-full ${
-                                isRejected ? 'bg-red-400' : 'bg-green-400'
-                              } ${isRejected ? '' : 'animate-pulse'}`}></div>
+                                isRejected ? 'bg-red-400' : isBlocked ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'
+                              }`}></div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {isRejected && (
                                     <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full font-semibold">
                                       REJECTED
+                                    </span>
+                                  )}
+                                  {isBlocked && (
+                                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full font-semibold">
+                                      BLOCKED
                                     </span>
                                   )}
                                   <div className="bg-slate-600/50 px-3 py-1.5 rounded-lg">
@@ -856,12 +893,14 @@ export default function AdminDashboard({ session }: { session: User }) {
                                     </p>
                                   </div>
                                 </div>
-                                {isRejected && tx.violations && tx.violations.length > 0 && (
+                                {(isRejected || isBlocked) && tx.violations && tx.violations.length > 0 && (
                                   <div className="mt-2 ml-6">
                                     <p className="text-xs text-slate-400 mb-1">Violations:</p>
                                     <div className="flex flex-wrap gap-1">
                                       {tx.violations.map((violation, idx) => (
-                                        <span key={idx} className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs rounded">
+                                        <span key={idx} className={`px-2 py-0.5 text-xs rounded ${
+                                          isBlocked ? 'bg-yellow-500/20 text-yellow-300' : 'bg-red-500/20 text-red-300'
+                                        }`}>
                                           {violation}
                                         </span>
                                       ))}
@@ -871,6 +910,11 @@ export default function AdminDashboard({ session }: { session: User }) {
                                 {isRejected && tx.reviewed_at && (
                                   <div className="mt-2 ml-6 text-xs text-slate-400">
                                     Rejected on: {new Date(tx.reviewed_at).toLocaleString()}
+                                  </div>
+                                )}
+                                {isBlocked && (
+                                  <div className="mt-2 ml-6 text-xs text-yellow-400">
+                                    Blocked - Awaiting Review
                                   </div>
                                 )}
                               </div>
@@ -886,14 +930,14 @@ export default function AdminDashboard({ session }: { session: User }) {
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                 </svg>
-                                ID: {tx.id.replace('rejected_', '').substring(0, 8)}...
+                                ID: {tx.id.replace('rejected_', '').replace('pending_', '').substring(0, 8)}...
                               </div>
                             </div>
                           </div>
                           <div className="ml-4 text-right">
                             <p className="text-xs text-slate-400 mb-1">Amount</p>
                             <p className={`text-3xl font-bold ${
-                              isRejected ? 'text-red-400' : 'text-green-400'
+                              isRejected ? 'text-red-400' : isBlocked ? 'text-yellow-400' : 'text-green-400'
                             }`}>
                               ${tx.amount.toFixed(2)}
                             </p>
@@ -1070,7 +1114,10 @@ export default function AdminDashboard({ session }: { session: User }) {
                               
                               <div className="flex gap-2 mt-4">
                                 <button
-                                  onClick={() => handleUpdateRule(rule.rule_id, { config: ruleConfigs[rule.rule_id] })}
+                                  onClick={() => {
+                                    const configToSave = ruleConfigs[rule.rule_id] || rule.config || {}
+                                    handleUpdateRule(rule.rule_id, { config: configToSave })
+                                  }}
                                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
                                 >
                                   Save Changes
