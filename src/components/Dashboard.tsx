@@ -269,31 +269,31 @@ export default function Dashboard({ session }: { session: User }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-4 sm:py-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 mb-6">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Digital Wallet
               </h1>
-              <p className="text-slate-400 text-sm mt-1">{session?.email}</p>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1 break-all">{session?.email}</p>
             </div>
             <button
               onClick={handleSignOut}
-              className="px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition-all font-medium"
+              className="w-full sm:w-auto px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition-all font-medium text-sm sm:text-base"
             >
               Sign Out
             </button>
           </div>
 
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white mb-8 shadow-lg shadow-indigo-500/25">
-            <p className="text-sm opacity-90 mb-2 font-medium">Current Balance</p>
-            <p className="text-5xl font-bold">${balance.toFixed(2)}</p>
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-6 sm:p-8 text-white mb-6 sm:mb-8 shadow-lg shadow-indigo-500/25">
+            <p className="text-xs sm:text-sm opacity-90 mb-2 font-medium">Current Balance</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl font-bold">${balance.toFixed(2)}</p>
           </div>
 
-          <form onSubmit={handleTransfer} className="space-y-5 mb-6">
-            <h2 className="text-2xl font-semibold text-slate-200 mb-6">Transfer Money</h2>
+          <form onSubmit={handleTransfer} className="space-y-4 sm:space-y-5 mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-slate-200 mb-4 sm:mb-6">Transfer Money</h2>
             
             <div>
               <label htmlFor="recipient" className="block text-sm font-medium text-slate-300 mb-2">
@@ -359,13 +359,13 @@ export default function Dashboard({ session }: { session: User }) {
           </form>
         </div>
 
-        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-slate-200">Transaction History</h2>
+        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold text-slate-200">Transaction History</h2>
             <button
               onClick={handleManualRefresh}
               disabled={isRefreshing || isFetchingRef.current}
-              className="px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-4 py-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh transactions"
             >
               {isRefreshing ? (
@@ -405,7 +405,7 @@ export default function Dashboard({ session }: { session: User }) {
                 return (
                   <div
                     key={tx.id}
-                    className={`p-5 rounded-xl border backdrop-blur-sm transition-all hover:scale-[1.02] ${
+                    className={`p-4 sm:p-5 rounded-xl border backdrop-blur-sm transition-all hover:scale-[1.01] sm:hover:scale-[1.02] ${
                       isPending
                         ? 'bg-yellow-500/10 border-yellow-500/30 hover:border-yellow-500/50'
                         : isSent
@@ -413,27 +413,27 @@ export default function Dashboard({ session }: { session: User }) {
                         : 'bg-emerald-500/10 border-emerald-500/30 hover:border-emerald-500/50'
                     }`}
                   >
-                    <div className="flex justify-between items-center">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className={`w-2 h-2 rounded-full ${
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start sm:items-center gap-2 mb-1 flex-wrap">
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 sm:mt-0 ${
                             isPending ? 'bg-yellow-400 animate-pulse' : isSent ? 'bg-red-400' : 'bg-emerald-400'
                           }`}></div>
-                          <p className="font-semibold text-slate-200">
+                          <p className="font-semibold text-slate-200 text-sm sm:text-base flex-1">
                             {isPending ? 'Transaction blocked, if manager would like to change this decision you will see it as approved' : isSent ? 'Sent to' : 'Received from'}
                           </p>
                           {isPending && (
-                            <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+                            <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full flex-shrink-0">
                               Awaiting Review
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-slate-400 ml-4">{otherEmail}</p>
+                        <p className="text-xs sm:text-sm text-slate-400 ml-4 break-all">{otherEmail}</p>
                         <p className="text-xs text-slate-500 mt-2 ml-4">
                           {new Date(tx.created_at).toLocaleString()}
                         </p>
                       </div>
-                      <div className={`text-2xl font-bold ${
+                      <div className={`text-xl sm:text-2xl font-bold flex-shrink-0 ${
                         isPending ? 'text-yellow-400' : isSent ? 'text-red-400' : 'text-emerald-400'
                       }`}>
                         {isSent ? '-' : '+'}${tx.amount.toFixed(2)}

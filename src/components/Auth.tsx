@@ -62,17 +62,17 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <div className="bg-slate-800/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl border border-slate-700/50 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+      <div className="bg-slate-800/90 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-2xl border border-slate-700/50 w-full max-w-md">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             Digital Wallet
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-400 text-xs sm:text-sm">
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </p>
         </div>
         
-        <form onSubmit={handleAuth} className="space-y-5">
+        <form onSubmit={handleAuth} className="space-y-4 sm:space-y-5">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
               Email

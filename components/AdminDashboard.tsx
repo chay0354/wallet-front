@@ -584,20 +584,20 @@ export default function AdminDashboard({ session }: { session: User }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-4 sm:py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 mb-6">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
+        <div className="bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-4 sm:p-6 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-red-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
                 Admin Dashboard
               </h1>
-              <p className="text-slate-400 text-sm mt-1">System Administration & Monitoring</p>
+              <p className="text-slate-400 text-xs sm:text-sm mt-1">System Administration & Monitoring</p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
               <button
                 onClick={handleSignOut}
-                className="px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition-all font-medium"
+                className="w-full sm:w-auto px-5 py-2.5 bg-slate-700/50 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-600 hover:border-slate-500 transition-all font-medium text-sm sm:text-base"
               >
                 Sign Out
               </button>
@@ -605,26 +605,26 @@ export default function AdminDashboard({ session }: { session: User }) {
           </div>
 
           {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-5 text-white">
-              <p className="text-sm opacity-90 mb-1">Total Users</p>
-              <p className="text-3xl font-bold">{totalUsers}</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-3 sm:p-5 text-white">
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Total Users</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{totalUsers}</p>
             </div>
-            <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-5 text-white">
-              <p className="text-sm opacity-90 mb-1">Total Transactions</p>
-              <p className="text-3xl font-bold">{totalTransactions}</p>
+            <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-xl p-3 sm:p-5 text-white">
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Total Transactions</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{totalTransactions}</p>
             </div>
-            <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-5 text-white">
-              <p className="text-sm opacity-90 mb-1">Pending Review</p>
-              <p className="text-3xl font-bold">{pendingCount}</p>
+            <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-3 sm:p-5 text-white">
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Pending Review</p>
+              <p className="text-xl sm:text-2xl md:text-3xl font-bold">{pendingCount}</p>
             </div>
-            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-5 text-white">
-              <p className="text-sm opacity-90 mb-1">Total Volume</p>
-              <p className="text-3xl font-bold">${totalVolume.toFixed(2)}</p>
+            <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-3 sm:p-5 text-white">
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Total Volume</p>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">${totalVolume.toFixed(2)}</p>
             </div>
-            <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-5 text-white">
-              <p className="text-sm opacity-90 mb-1">Total Balance</p>
-              <p className="text-3xl font-bold">${totalBalance.toFixed(2)}</p>
+            <div className="bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl p-3 sm:p-5 text-white">
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Total Balance</p>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold">${totalBalance.toFixed(2)}</p>
             </div>
           </div>
 
@@ -640,59 +640,61 @@ export default function AdminDashboard({ session }: { session: User }) {
           </div>
 
           {/* Tabs */}
-          <div className="flex space-x-4 mb-6 border-b border-slate-700">
-            <button
-              onClick={() => setActiveTab('pending')}
-              className={`px-6 py-3 font-semibold transition-colors relative ${
-                activeTab === 'pending'
-                  ? 'text-red-400 border-b-2 border-red-400'
-                  : 'text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              Pending Review
-              {pendingCount > 0 && (
-                <span className="ml-2 px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
-                  {pendingCount}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => setActiveTab('rules')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'rules'
-                  ? 'text-red-400 border-b-2 border-red-400'
-                  : 'text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              Rules ({rules.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('transactions')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'transactions'
-                  ? 'text-red-400 border-b-2 border-red-400'
-                  : 'text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              Transactions ({filteredTransactions.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'users'
-                  ? 'text-red-400 border-b-2 border-red-400'
-                  : 'text-slate-400 hover:text-slate-300'
-              }`}
-            >
-              Users ({filteredUsers.length})
-            </button>
+          <div className="mb-4 sm:mb-6 border-b border-slate-700 -mx-4 sm:mx-0 px-4 sm:px-0">
+            <div className="flex overflow-x-auto space-x-2 sm:space-x-4 scrollbar-hide pb-1">
+              <button
+                onClick={() => setActiveTab('pending')}
+                className={`px-3 sm:px-6 py-2 sm:py-3 font-semibold transition-colors relative whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+                  activeTab === 'pending'
+                    ? 'text-red-400 border-b-2 border-red-400'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Pending Review
+                {pendingCount > 0 && (
+                  <span className="ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
+                    {pendingCount}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveTab('rules')}
+                className={`px-3 sm:px-6 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+                  activeTab === 'rules'
+                    ? 'text-red-400 border-b-2 border-red-400'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Rules ({rules.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('transactions')}
+                className={`px-3 sm:px-6 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+                  activeTab === 'transactions'
+                    ? 'text-red-400 border-b-2 border-red-400'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Transactions ({filteredTransactions.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`px-3 sm:px-6 py-2 sm:py-3 font-semibold transition-colors whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+                  activeTab === 'users'
+                    ? 'text-red-400 border-b-2 border-red-400'
+                    : 'text-slate-400 hover:text-slate-300'
+                }`}
+              >
+                Users ({filteredUsers.length})
+              </button>
+            </div>
           </div>
 
           {/* Pending Transactions Tab */}
           {activeTab === 'pending' && (
-            <div className="bg-slate-700/30 rounded-xl p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-slate-200">blocked transaction review</h2>
+            <div className="bg-slate-700/30 rounded-xl p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-slate-200">blocked transaction review</h2>
                 <button
                   onClick={() => {
                     if (!isRefreshing && !isFetchingRef.current) {
@@ -700,7 +702,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                     }
                   }}
                   disabled={isRefreshing || isFetchingRef.current}
-                  className="px-4 py-2 bg-slate-600/50 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto px-4 py-2 bg-slate-600/50 hover:bg-slate-600 text-slate-300 rounded-lg text-xs sm:text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Refresh pending transactions"
                 >
                   {isRefreshing ? (
@@ -735,26 +737,26 @@ export default function AdminDashboard({ session }: { session: User }) {
                   {filteredPending.map((tx) => (
                     <div
                       key={tx.id}
-                      className="p-5 rounded-xl bg-red-900/20 border-2 border-red-500/50 hover:border-red-500 transition-all"
+                      className="p-4 sm:p-5 rounded-xl bg-red-900/20 border-2 border-red-500/50 hover:border-red-500 transition-all"
                     >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <div className="bg-slate-600/50 px-3 py-1.5 rounded-lg">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-start gap-4 mb-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse flex-shrink-0 mt-1"></div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                                <div className="bg-slate-600/50 px-2 sm:px-3 py-1.5 rounded-lg flex-1 sm:flex-none min-w-0">
                                   <p className="text-xs text-slate-400 mb-1">From</p>
-                                  <p className="font-semibold text-slate-200 text-sm">
+                                  <p className="font-semibold text-slate-200 text-xs sm:text-sm break-all">
                                     {tx.from_user_email || 'Unknown User'}
                                   </p>
                                 </div>
-                                <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-400 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                 </svg>
-                                <div className="bg-slate-600/50 px-3 py-1.5 rounded-lg">
+                                <div className="bg-slate-600/50 px-2 sm:px-3 py-1.5 rounded-lg flex-1 sm:flex-none min-w-0">
                                   <p className="text-xs text-slate-400 mb-1">To</p>
-                                  <p className="font-semibold text-slate-200 text-sm">
+                                  <p className="font-semibold text-slate-200 text-xs sm:text-sm break-all">
                                     {tx.to_user_email || 'Unknown User'}
                                   </p>
                                 </div>
@@ -767,7 +769,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                             <p className="text-xs text-red-400 font-semibold mb-2">Flagged Violations:</p>
                             <div className="space-y-1">
                               {tx.violations.map((violation, idx) => (
-                                <div key={idx} className="bg-red-900/30 px-3 py-1.5 rounded text-xs text-red-300 border border-red-700/50">
+                                <div key={idx} className="bg-red-900/30 px-2 sm:px-3 py-1.5 rounded text-xs text-red-300 border border-red-700/50">
                                   ⚠️ {violation}
                                 </div>
                               ))}
@@ -783,9 +785,9 @@ export default function AdminDashboard({ session }: { session: User }) {
                             </div>
                           </div>
                         </div>
-                        <div className="ml-4 text-right">
+                        <div className="ml-0 sm:ml-4 text-left sm:text-right w-full sm:w-auto">
                           <p className="text-xs text-slate-400 mb-1">Amount</p>
-                          <p className="text-3xl font-bold text-red-400">
+                          <p className="text-2xl sm:text-3xl font-bold text-red-400">
                             ${tx.amount.toFixed(2)}
                           </p>
                         </div>
@@ -793,31 +795,31 @@ export default function AdminDashboard({ session }: { session: User }) {
 
                       {/* Review Actions */}
                       {reviewingTx === tx.id ? (
-                        <div className="mt-4 flex gap-2">
+                        <div className="mt-4 flex flex-col sm:flex-row gap-2">
                           <button
                             onClick={() => handleApproveTransaction(tx.id, true)}
-                            className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                            className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors text-sm"
                           >
                             ✓ Approve
                           </button>
                           <button
                             onClick={() => handleApproveTransaction(tx.id, false)}
-                            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+                            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors text-sm"
                           >
                             ✗ Reject
                           </button>
                           <button
                             onClick={() => setReviewingTx(null)}
-                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
+                            className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors text-sm"
                           >
                             Cancel
                           </button>
                         </div>
                       ) : (
-                        <div className="mt-4 flex gap-2">
+                        <div className="mt-4">
                           <button
                             onClick={() => setReviewingTx(tx.id)}
-                            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+                            className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors text-sm"
                           >
                             Review Transaction
                           </button>
@@ -832,8 +834,8 @@ export default function AdminDashboard({ session }: { session: User }) {
 
           {/* Transactions Tab */}
           {activeTab === 'transactions' && (
-            <div className="bg-slate-700/30 rounded-xl p-6">
-              <h2 className="text-2xl font-semibold text-slate-200 mb-6">All Transactions</h2>
+            <div className="bg-slate-700/30 rounded-xl p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-slate-200 mb-4 sm:mb-6">All Transactions</h2>
               {filteredTransactions.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-700/50 mb-4">
@@ -851,7 +853,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                     return (
                       <div
                         key={tx.id}
-                        className={`p-5 rounded-xl border transition-all hover:scale-[1.01] ${
+                        className={`p-4 sm:p-5 rounded-xl border transition-all hover:scale-[1.01] ${
                           isRejected
                             ? 'bg-red-500/10 border-red-500/50 hover:border-red-500'
                             : isBlocked
@@ -859,14 +861,14 @@ export default function AdminDashboard({ session }: { session: User }) {
                             : 'bg-slate-600/30 border-slate-600/50 hover:border-slate-500'
                         }`}
                       >
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className={`w-3 h-3 rounded-full ${
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className={`w-3 h-3 rounded-full flex-shrink-0 mt-1 ${
                                 isRejected ? 'bg-red-400' : isBlocked ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'
                               }`}></div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 flex-wrap">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-wrap">
                                   {isRejected && (
                                     <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full font-semibold">
                                       REJECTED
@@ -877,18 +879,18 @@ export default function AdminDashboard({ session }: { session: User }) {
                                       BLOCKED
                                     </span>
                                   )}
-                                  <div className="bg-slate-600/50 px-3 py-1.5 rounded-lg">
+                                  <div className="bg-slate-600/50 px-2 sm:px-3 py-1.5 rounded-lg flex-1 sm:flex-none min-w-0">
                                     <p className="text-xs text-slate-400 mb-1">From</p>
-                                    <p className="font-semibold text-slate-200 text-sm">
+                                    <p className="font-semibold text-slate-200 text-xs sm:text-sm break-all">
                                       {tx.from_user_email || 'Unknown User'}
                                     </p>
                                   </div>
-                                  <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500 flex-shrink-0 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                   </svg>
-                                  <div className="bg-slate-600/50 px-3 py-1.5 rounded-lg">
+                                  <div className="bg-slate-600/50 px-2 sm:px-3 py-1.5 rounded-lg flex-1 sm:flex-none min-w-0">
                                     <p className="text-xs text-slate-400 mb-1">To</p>
-                                    <p className="font-semibold text-slate-200 text-sm">
+                                    <p className="font-semibold text-slate-200 text-xs sm:text-sm break-all">
                                       {tx.to_user_email || 'Unknown User'}
                                     </p>
                                   </div>
@@ -934,9 +936,9 @@ export default function AdminDashboard({ session }: { session: User }) {
                               </div>
                             </div>
                           </div>
-                          <div className="ml-4 text-right">
+                          <div className="ml-0 sm:ml-4 text-left sm:text-right w-full sm:w-auto">
                             <p className="text-xs text-slate-400 mb-1">Amount</p>
-                            <p className={`text-3xl font-bold ${
+                            <p className={`text-2xl sm:text-3xl font-bold ${
                               isRejected ? 'text-red-400' : isBlocked ? 'text-yellow-400' : 'text-green-400'
                             }`}>
                               ${tx.amount.toFixed(2)}
@@ -953,10 +955,10 @@ export default function AdminDashboard({ session }: { session: User }) {
 
           {/* Rules Tab */}
           {activeTab === 'rules' && (
-            <div className="bg-slate-700/30 rounded-xl p-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-slate-200">Transaction Rules</h2>
-                <p className="text-sm text-slate-400 mt-1">Manage rules that automatically flag suspicious transactions</p>
+            <div className="bg-slate-700/30 rounded-xl p-4 sm:p-6">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-semibold text-slate-200">Transaction Rules</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">Manage rules that automatically flag suspicious transactions</p>
               </div>
               {rules.length === 0 ? (
                 <div className="text-center py-12">
@@ -972,18 +974,18 @@ export default function AdminDashboard({ session }: { session: User }) {
                   {rules.map((rule) => (
                     <div
                       key={rule.rule_id}
-                      className="p-5 rounded-xl bg-slate-600/30 border border-slate-600/50 hover:border-slate-500 transition-all"
+                      className="p-4 sm:p-5 rounded-xl bg-slate-600/30 border border-slate-600/50 hover:border-slate-500 transition-all"
                     >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className={`w-3 h-3 rounded-full ${rule.enabled ? 'bg-green-400' : 'bg-slate-500'}`}></div>
-                            <h3 className="text-lg font-semibold text-slate-200">{rule.name}</h3>
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
+                            <div className={`w-3 h-3 rounded-full flex-shrink-0 ${rule.enabled ? 'bg-green-400' : 'bg-slate-500'}`}></div>
+                            <h3 className="text-base sm:text-lg font-semibold text-slate-200">{rule.name}</h3>
                             <span className={`px-2 py-1 text-xs rounded ${rule.enabled ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}>
                               {rule.enabled ? 'Active' : 'Disabled'}
                             </span>
                           </div>
-                          <p className="text-sm text-slate-400 ml-6 mb-3">{rule.description}</p>
+                          <p className="text-xs sm:text-sm text-slate-400 ml-5 sm:ml-6 mb-3">{rule.description}</p>
                           
                           {/* Rule Configuration */}
                           {editingRule === rule.rule_id ? (
@@ -1157,10 +1159,10 @@ export default function AdminDashboard({ session }: { session: User }) {
                             </div>
                           )}
                         </div>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 w-full sm:w-auto">
                           <button
                             onClick={() => handleToggleRule(rule.rule_id, !rule.enabled)}
-                            className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
+                            className={`px-4 py-2 rounded-lg font-semibold transition-colors text-sm ${
                               rule.enabled
                                 ? 'bg-red-600 hover:bg-red-700 text-white'
                                 : 'bg-green-600 hover:bg-green-700 text-white'
@@ -1171,7 +1173,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                           {editingRule !== rule.rule_id && (
                             <button
                               onClick={() => setEditingRule(rule.rule_id)}
-                              className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
+                              className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors text-sm"
                             >
                               Edit
                             </button>
@@ -1187,8 +1189,8 @@ export default function AdminDashboard({ session }: { session: User }) {
 
           {/* Users Tab */}
           {activeTab === 'users' && (
-            <div className="bg-slate-700/30 rounded-xl p-6">
-              <h2 className="text-2xl font-semibold text-slate-200 mb-6">All Users</h2>
+            <div className="bg-slate-700/30 rounded-xl p-4 sm:p-6">
+              <h2 className="text-xl sm:text-2xl font-semibold text-slate-200 mb-4 sm:mb-6">All Users</h2>
               {filteredUsers.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-700/50 mb-4">
