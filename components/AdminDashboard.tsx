@@ -615,7 +615,7 @@ export default function AdminDashboard({ session }: { session: User }) {
               <p className="text-xl sm:text-2xl md:text-3xl font-bold">{totalTransactions}</p>
             </div>
             <div className="bg-gradient-to-br from-red-600 to-red-700 rounded-xl p-3 sm:p-5 text-white">
-              <p className="text-xs sm:text-sm opacity-90 mb-1">Pending Review</p>
+              <p className="text-xs sm:text-sm opacity-90 mb-1">Blocked by Rule</p>
               <p className="text-xl sm:text-2xl md:text-3xl font-bold">{pendingCount}</p>
             </div>
             <div className="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-3 sm:p-5 text-white">
@@ -650,7 +650,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                     : 'text-slate-400 hover:text-slate-300'
                 }`}
               >
-                Pending Review
+                Blocked by Rule
                 {pendingCount > 0 && (
                   <span className="ml-1 sm:ml-2 px-1.5 sm:px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
                     {pendingCount}
@@ -774,9 +774,11 @@ export default function AdminDashboard({ session }: { session: User }) {
                                 </div>
                               ))}
                             </div>
-                            <p className="text-xs text-slate-400 mt-2 italic">
-                              This action was stopped by a deterministic rule – not scored.
-                            </p>
+                            <div className="mt-2">
+                              <span className="px-2 py-0.5 text-xs rounded bg-red-500/20 text-red-300">
+                                This action was stopped by a deterministic rule – not scored.
+                              </span>
+                            </div>
                           </div>
 
                           <div className="ml-6 flex items-center gap-4 text-xs text-slate-400">
@@ -909,12 +911,12 @@ export default function AdminDashboard({ session }: { session: User }) {
                                           {violation}
                                         </span>
                                       ))}
-                                    </div>
-                                    {isBlocked && (
-                                      <p className="text-xs text-slate-400 mt-2 italic">
+                                      <span className={`px-2 py-0.5 text-xs rounded ${
+                                        isBlocked ? 'bg-yellow-500/20 text-yellow-300' : 'bg-red-500/20 text-red-300'
+                                      }`}>
                                         This action was stopped by a deterministic rule – not scored.
-                                      </p>
-                                    )}
+                                      </span>
+                                    </div>
                                   </div>
                                 )}
                                 {isRejected && tx.reviewed_at && (
