@@ -774,6 +774,9 @@ export default function AdminDashboard({ session }: { session: User }) {
                                 </div>
                               ))}
                             </div>
+                            <p className="text-xs text-slate-400 mt-2 italic">
+                              This action was stopped by a deterministic rule – not scored.
+                            </p>
                           </div>
 
                           <div className="ml-6 flex items-center gap-4 text-xs text-slate-400">
@@ -907,6 +910,11 @@ export default function AdminDashboard({ session }: { session: User }) {
                                         </span>
                                       ))}
                                     </div>
+                                    {isBlocked && (
+                                      <p className="text-xs text-slate-400 mt-2 italic">
+                                        This action was stopped by a deterministic rule – not scored.
+                                      </p>
+                                    )}
                                   </div>
                                 )}
                                 {isRejected && tx.reviewed_at && (
