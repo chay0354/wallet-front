@@ -424,7 +424,7 @@ export default function Dashboard({ session }: { session: User }) {
                           </p>
                           {isPending && (
                             <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded-full flex-shrink-0">
-                              Awaiting Review
+                              Blocked by Rule
                             </span>
                           )}
                         </div>

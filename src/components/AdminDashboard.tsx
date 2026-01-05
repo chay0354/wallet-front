@@ -800,7 +800,7 @@ export default function AdminDashboard({ session }: { session: User }) {
                             onClick={() => handleApproveTransaction(tx.id, true)}
                             className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors text-sm"
                           >
-                            ✓ Approve
+                            human override
                           </button>
                           <button
                             onClick={() => handleApproveTransaction(tx.id, false)}
